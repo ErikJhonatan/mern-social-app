@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
 import bcrypt from "bcrypt";
+import httpStatusCodes from "http-status-codes";
 
 const UserSchema = new mongoose.Schema(
   {
@@ -15,7 +16,16 @@ const UserSchema = new mongoose.Schema(
       match: [
         /^[a-zA-Z0-9_.]+$/,
         "El nombre de usuario solo puede contener letras, números, puntos y guiones bajos",
-      ]
+      ],
+      // mostrar error personalizado si el nombre de usuario ya existe
+      validate: {
+        validator: async function (username) {
+          const user = await this.constructor.findOne({ username });
+          if (user && user.id !== this.id) return false;
+          return true;
+        },
+        message: "El nombre de usuario ya existe",
+      },
     },
     email: {
       type: String,
@@ -26,6 +36,14 @@ const UserSchema = new mongoose.Schema(
       ],
       unique: true,
       match: [/^\S+@\S+\.\S+$/, "El correo electrónico no es válido"], // Validación de formato
+      validate: {
+        validator: async function (email) {
+          const user = await this.constructor.findOne({ email });
+          if (user && user.id !== this.id) return false;
+          return true;
+        },
+        message: "El correo electrónico ya está en uso",
+      },
     },
     password: {
       type: String,
@@ -86,6 +104,93 @@ UserSchema.pre("save", async function (next) {
 
 UserSchema.methods.comparePassword = async function (enteredPassword) {
   return await bcrypt.compare(enteredPassword, this.password);
+};
+
+UserSchema.statics.getUser = async function (userId) {
+  try {
+    const user = await this.findById(userId);
+    if (!user) {
+      throw new Error("Usuario no encontrado");
+    }
+    return user;
+  } catch (err) {
+    throw new Error(err.message || "Error al obtener el usuario");
+  }
+};
+
+UserSchema.statics.updateUser = async function (userId, updateData) {
+  try {
+    if (updateData.password)
+      updateData.password = await bcrypt.hash(updateData.password, 12);
+    return await this.findByIdAndUpdate(userId, updateData, { new: true });
+  } catch (err) {
+    next(err);
+  }
+};
+
+UserSchema.statics.deleteUser = async function (userId) {
+  try {
+    const user = await this.findByIdAndDelete(userId);
+    if (!user) {
+      const err = new Error("Usuario no encontrado");
+      err.status = httpStatusCodes.NOT_FOUND;
+      throw err;
+    }
+    return user;
+  } catch (err) {
+    next(err);
+  }
+};
+
+UserSchema.statics.followUser = async function (userId, followId) {
+  if (userId === followId) {
+    const err = new Error("No puedes seguirte a ti mismo");
+    err.status = httpStatusCodes.BAD_REQUEST;
+    throw err;
+  }
+  const user = await this.findById(userId);
+  const followUser = await this.findById(followId);
+  
+  if (!user || !followUser) {
+    const err = new Error("Usuario no encontrado");
+    err.status = httpStatusCodes.NOT_FOUND;
+    throw err;
+  }
+
+  if (!user.followings.includes(followId)) {
+    await user.updateOne({ $push: { followings: followId } });
+    await followUser.updateOne({ $push: { followers: userId } });
+    return true;
+  } else {
+    const err = new Error("Ya sigues a este usuario");
+    err.status = httpStatusCodes.BAD_REQUEST;
+    throw err;
+  }
+};
+
+UserSchema.statics.unfollowUser = async function (userId, unfollowId) {
+  const user = await this.findById(userId);
+  const unfollowUser = await this.findById(unfollowId);
+  if (!user) {
+    const err = new Error("Usuario no encontrado");
+    err.status = httpStatusCodes.NOT_FOUND;
+    throw err;
+  }
+  if (!unfollowUser) {
+    const err = new Error("Usuario a dejar de seguir no encontrado");
+    err.status = httpStatusCodes.NOT_FOUND;
+    throw err;
+  }
+
+  if (user.followings.includes(unfollowId)) {
+    await user.updateOne({ $pull: { followings: unfollowId } });
+    await unfollowUser.updateOne({ $pull: { followers: userId } });
+    return true;
+  } else {
+    const err = new Error("No sigues a este usuario");
+    err.status = httpStatusCodes.BAD_REQUEST;
+    throw err;
+  }
 };
 
 export default mongoose.model("User", UserSchema);
