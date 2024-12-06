@@ -3,9 +3,13 @@ import mongoose from 'mongoose';
 import dotenv from 'dotenv';
 import helmet from 'helmet';
 import morgan from 'morgan';
+import cors from 'cors';
+import cookieParser from 'cookie-parser';
 import AuthMiddleware from './middlewares/AuthMiddleware.js'
 import ErrorMiddleware from './middlewares/ErrorMiddleware.js';
 import authRouter from './routes/auth.js';
+import UsersRouter from './routes/users.js';
+import checkUserExists from './middlewares/checkUserExists.js';
 
 const app = express();
 const port = 3000;
@@ -19,7 +23,10 @@ mongoose.connect(process.env.MONGO_URL).then(() => console.log('Connected to Mon
 app.use(express.json());
 app.use(helmet()); // sirve para proteger la app de ciertos ataques en la web ejemplos: xss, clickjacking, etc
 app.use(morgan('common')); // sirve para ver las peticiones que se hacen a la app
+app.use(cors());
+app.use(cookieParser());
 app.use(AuthMiddleware);
+app.use(checkUserExists);
 
 
 app.get('/', (req, res) => {
@@ -30,6 +37,7 @@ app.get('/', (req, res) => {
 });
 
 app.use('/api/auth', authRouter);
+app.use('/api/users', UsersRouter);
 app.use(ErrorMiddleware);
 
 
