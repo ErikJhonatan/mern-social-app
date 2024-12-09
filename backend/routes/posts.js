@@ -36,10 +36,18 @@ PostsRouter.put('/:id', validatePostId, validatePostBody, async (req, res, next)
     if (!content.desc?.trim() && !content.img) {
       return res.status(400).json({ message: 'La publicación necesita texto o imagen' });
     }
-    const updatedPost = await Post.findOneAndUpdate({ _id: req.params.id, userId: userAuthId }, {
-      $set: req.postData
-    }, { new: true, runValidators: true });
-    if (!updatedPost) return res.status(404).json({ message: 'Post no encontrado' });
+    const changes = { $set: { ...req.postData } };
+    if (changes.$set.img === '') {
+      delete changes.$set.img;
+      changes.$unset = { img: 1 };
+    }
+    const updatedPost = await Post.findOneAndUpdate({
+      _id: req.params.id,
+      userId: userAuthId,
+      desc: post.desc ?? null,
+      img: post.img ?? null,
+    }, changes, { new: true, runValidators: true });
+    if (!updatedPost) return res.status(409).json({ message: 'La publicación cambió; vuelve a cargarla' });
     res.status(httpStatusCodes.OK).json(updatedPost);
   }
   catch (error) {

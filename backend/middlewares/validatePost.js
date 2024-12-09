@@ -24,5 +24,6 @@ export function validatePostBody(req, res, next) {
     return res.status(400).json({ message: 'La publicación necesita texto o imagen' });
   }
   req.postData = Object.fromEntries(['desc', 'img'].filter(key => body[key] !== undefined).map(key => [key, body[key]]));
+  if (req.method === 'POST' && req.postData.img === '') delete req.postData.img;
   next();
 }

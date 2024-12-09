@@ -16,3 +16,6 @@ Prepared for this change. **Not executed.** Tests, manual checks, lint and build
 | --- | --- | --- |
 | Concurrent likes | Two different users like the same post concurrently | Both likes remain present |
 | Partial edit | Clear text on an image post; clear all content | Image-only edit succeeds; empty post is rejected |
+
+| Image removal | Clear the image while text remains | Image field is unset; validation succeeds |
+| Concurrent edits | Simultaneously clear text and image from the same post | One edit conflicts with HTTP 409; content cannot become empty |
