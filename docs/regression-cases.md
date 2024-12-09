@@ -9,3 +9,10 @@ Prepared for this change. **Not executed.** Tests, manual checks, lint and build
 | Identity | Delete a different user with a non-admin session; repeat with a deleted account JWT | 401; no mutation |
 | Uploads | Registration with an uploaded image fails validation or database save | Temporary file removed; uploaded Cloudinary asset removed if user was not saved |
 | Password | Save an unchanged existing password then log in | Password is not hashed twice; responses omit password |
+
+## Additional cases (not executed)
+
+| Case | Input or setup | Expected outcome |
+| --- | --- | --- |
+| Concurrent likes | Two different users like the same post concurrently | Both likes remain present |
+| Partial edit | Clear text on an image post; clear all content | Image-only edit succeeds; empty post is rejected |

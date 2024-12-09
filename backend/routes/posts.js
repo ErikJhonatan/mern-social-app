@@ -32,9 +32,14 @@ PostsRouter.put('/:id', validatePostId, validatePostBody, async (req, res, next)
       throw err;
     }
 
-    const updatedPost = await Post.findByIdAndUpdate(req.params.id, {
+    const content = { desc: post.desc, img: post.img, ...req.postData };
+    if (!content.desc?.trim() && !content.img) {
+      return res.status(400).json({ message: 'La publicación necesita texto o imagen' });
+    }
+    const updatedPost = await Post.findOneAndUpdate({ _id: req.params.id, userId: userAuthId }, {
       $set: req.postData
     }, { new: true, runValidators: true });
+    if (!updatedPost) return res.status(404).json({ message: 'Post no encontrado' });
     res.status(httpStatusCodes.OK).json(updatedPost);
   }
   catch (error) {
@@ -57,7 +62,8 @@ PostsRouter.delete('/:id', validatePostId, async (req, res, next) => {
       err.status = httpStatusCodes.UNAUTHORIZED;
       throw err;
     }
-    const deletedPost = await Post.findByIdAndDelete(req.params.id);
+    const deletedPost = await Post.findOneAndDelete({ _id: req.params.id, userId: userAuthId });
+    if (!deletedPost) return res.status(404).json({ message: 'Post no encontrado' });
     res.status(httpStatusCodes.OK).json(deletedPost);
   }
   catch (error) {
@@ -76,13 +82,12 @@ PostsRouter.post('/:id/like', validatePostId, async (req, res, next) => {
       err.status = httpStatusCodes.NOT_FOUND;
       throw err;
     }
-    if (post.likes.includes(userAuthId)) {
-      post.likes = post.likes.filter((like) => like !== userAuthId);
-    } else {
-      post.likes.push(userAuthId);
-    }
-    await post.save();
-    res.status(httpStatusCodes.OK).json(post);
+    const change = post.likes.includes(userAuthId)
+      ? { $pull: { likes: userAuthId } }
+      : { $addToSet: { likes: userAuthId } };
+    const updatedPost = await Post.findByIdAndUpdate(req.params.id, change, { new: true });
+    if (!updatedPost) return res.status(404).json({ message: 'Post no encontrado' });
+    res.status(httpStatusCodes.OK).json(updatedPost);
   }
   catch (error) {
     next(error);
