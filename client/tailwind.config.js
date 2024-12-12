@@ -1,6 +1,6 @@
 import daisyui from "daisyui"
 import { fontFamily } from "tailwindcss/defaultTheme"
-
+import twScrollbar from "tailwind-scrollbar";
 
 /** @type {import('tailwindcss').Config} */1
 export default {
@@ -13,7 +13,8 @@ export default {
     },
   },
   plugins: [
-    daisyui
+    daisyui,
+    twScrollbar,
   ],
   daisyui: {
     themes: false, // false: only light + dark | true: all themes | array: specific themes like this ["light", "dark", "cupcake"]

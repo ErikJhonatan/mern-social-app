@@ -9,7 +9,7 @@ function topbar() {
   };
 
   return (
-    <div className="navbar bg-base-100">
+    <div className="topbar navbar bg-base-100">
       <div className="navbar-start">
         <div className="dropdown">
           <div tabIndex={0} role="button" className="btn btn-ghost lg:hidden">
@@ -66,7 +66,7 @@ function topbar() {
           <div tabIndex={0} role="button" className="btn btn-ghost">
             <LuMessageSquareText className="text-2xl" />
           </div>
-          <div className="badge badge-primary badge-xs absolute top-2 right-2 ">
+          <div className="badge badge-primary badge-xs absolute top-1 right-2 py-2">
             2
           </div>
 
@@ -91,7 +91,7 @@ function topbar() {
           <div tabIndex={0} role="button" className="btn btn-ghost">
             <FaUser className="text-2xl" />
           </div>
-          <div className="badge badge-primary badge-xs absolute top-2 right-2 ">
+          <div className="badge badge-primary badge-xs absolute top-1 right-2 py-2">
             2
           </div>
           <ul
@@ -114,7 +114,7 @@ function topbar() {
           <div tabIndex={0} role="button" className="btn btn-ghost">
             <IoMdNotifications className="text-2xl" />
           </div>
-          <div className="badge badge-primary badge-xs absolute top-2 right-2 ">
+          <div className="badge badge-primary badge-xs absolute top-1 right-2  py-2 ">
             2
           </div>
           <ul

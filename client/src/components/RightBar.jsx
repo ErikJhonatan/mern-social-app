@@ -1,9 +1,13 @@
 import React from 'react'
+import PropTypes from 'prop-types'
 
-function RightBar() {
+function RightBar(props) {
   return (
-    <div>RightBar</div>
+    <div className={`${props.classname}`} >RightBar</div>
   )
+}
+RightBar.propTypes = {
+  classname: PropTypes.string,
 }
 
 export default RightBar

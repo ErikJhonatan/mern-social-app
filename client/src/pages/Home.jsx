@@ -7,10 +7,10 @@ function Home() {
   return (
     <>
       <Topbar />
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-        <Sidebar />
-        <Feed />
-        <Rightbar />
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+        <Sidebar className="col-span-1" />
+        <Feed className="col-span-2"/>
+        <Rightbar className="col-span-1" />
       </div>
     </>
   )
