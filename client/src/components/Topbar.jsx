@@ -9,7 +9,7 @@ function topbar() {
   };
 
   return (
-    <div className="topbar navbar bg-base-100">
+    <div className="topbar navbar bg-base-100 sticky top-0 z-10">
       <div className="navbar-start">
         <div className="dropdown">
           <div tabIndex={0} role="button" className="btn btn-ghost lg:hidden">
@@ -129,7 +129,7 @@ function topbar() {
           </ul>
         </div>
         <div className="dropdown dropdown-end">
-          <div tabIndex={0} role="button" className="avatar">
+          <div tabIndex={0} role="button" className="avatar online">
             <div className="w-10 rounded-full">
               <img src="https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp" />
             </div>

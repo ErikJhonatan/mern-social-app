@@ -21,7 +21,11 @@ function Sidebar(props) {
   }, [topBarOffsetWidth]);
 
   return (
-    <div className={`sidebar-app bg-base-200 p-4 rounded-lg shadow-lg overflow-y-scroll ${props.className} scrollbar scrollbar-thumb-neutral scrollbar-track-neutral-content`}>
+    <div className={`sidebar-app bg-base-200 p-4 rounded-lg shadow-lg overflow-y-auto ${props.className} scrollbar scrollbar-thumb-neutral scrollbar-track-neutral-content sticky left-0`}
+      style={{
+        top: `${topBarOffsetWidth}px`
+      }}
+    >
       <ul className="menu bg-base-200 rounded-box w-full">
         <li>
           <a>
