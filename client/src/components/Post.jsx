@@ -1,29 +1,26 @@
-import React from 'react'
-import PropTypes from 'prop-types';
-import {Users} from '../utils/dummyData.js'
+import { useState } from "react";
+import PropTypes from "prop-types";
+import { Users } from "../utils/dummyData.js";
 import { SlOptionsVertical } from "react-icons/sl";
 // icon like and heart
-import {FaRegHeart } from "react-icons/fa";
+import { FaRegHeart, FaHeart } from "react-icons/fa";
 
 function Post(props) {
-  const {
-    id,
-    desc,
-    photo,
-    date,
-    userId,
-    like,
-    comment,
-  } = props.dataPost;
+  const { id, desc, photo, date, userId, like, comment } = props.dataPost;
 
-  const {
-    username,
-    profilePicture
-  } = Users.find((user) => user.id === userId);
+  const { username, profilePicture } = Users.find((user) => user.id === userId);
+
+  const [likePost, setLikePost] = useState(like);
+  const [isLiked, setIsLiked] = useState(true);
+
+  const likeHandler = () => {
+    setLikePost(isLiked ? likePost - 1 : likePost + 1);
+    setIsLiked(!isLiked);
+  };
 
   return (
     <div>
-       {/* Post wrapper*/}
+      {/* Post wrapper*/}
       <div className="p-5 rounded-lg shadow-md mb-5">
         {/* Post top */}
         <div className="flex justify-between">
@@ -31,22 +28,26 @@ function Post(props) {
           <div className="flex items-center gap-2 mb-4">
             <div className="avatar">
               <div className="w-10 rounded-full">
-                <img src={profilePicture} alt=""/>
+                <img src={profilePicture} alt="" />
               </div>
             </div>
             <div className="flex gap-1">
-              <h2 className="font-semibold">{
-                username  
-              }</h2>
+              <h2 className="font-semibold">{username}</h2>
               <span className="text-gray-500">{date}</span>
             </div>
           </div>
 
           {/* Post top right */}
           <div>
-            <button className="btn btn-circle">
-              <SlOptionsVertical className="text-2xl text-gray-500" />
-            </button>
+            <details className="dropdown">
+              <summary className="btn btn-circle">
+                <SlOptionsVertical className="text-2xl text-gray-500" />
+              </summary>
+              <ul className="menu dropdown-content bg-base-100 rounded-box z-[1] w-24 p-2 shadow">
+                <li><a>Compartir</a></li>
+                <li><a>Reportar</a></li>
+              </ul>
+            </details>
           </div>
         </div>
 
@@ -60,10 +61,20 @@ function Post(props) {
         <div className="flex justify-between mt-5">
           {/* Post bottom left */}
           <div className="flex items-center gap-2">
-            <button className="btn btn-circle">
-              <FaRegHeart className="text-2xl text-red-500" />
-            </button>
-            <span>{like}</span>
+            <label className="swap">
+              {/* this hidden checkbox controls the state */}
+              <input type="checkbox" onClick={likeHandler} defaultChecked={isLiked} />
+
+              {/* like icon */}
+              <FaRegHeart
+                className="swap-off text-2xl text-red-500 cursor-pointer"
+              />
+              {/* liked icon */}
+              <FaHeart
+                className="swap-on text-2xl text-red-500 cursor-pointer"
+              />
+            </label>
+            <span>{likePost}</span>
           </div>
 
           {/* Post bottom right */}
@@ -73,9 +84,8 @@ function Post(props) {
         </div>
       </div>
     </div>
-  )
+  );
 }
-
 
 Post.propTypes = {
   dataPost: PropTypes.shape({

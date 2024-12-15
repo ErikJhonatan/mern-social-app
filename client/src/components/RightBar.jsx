@@ -3,6 +3,7 @@ import PropTypes from 'prop-types'
 import gift from '/gift.png'
 import person1 from '/person/1.jpeg'
 
+import { Users } from '../utils/dummyData'
 
 function RightBar(props) {
 
@@ -14,7 +15,7 @@ function RightBar(props) {
       const rightBarElement = document.querySelector(".right-bar-app");
       rightBarElement.style.height = `calc(100vh - ${topBarOffsetWidth}px)`;
     }, [topBarOffsetWidth]);
-  
+
 
   return (
     <div className={`right-bar-app ${props.className} overflow-y-auto sticky right-0`}
@@ -37,15 +38,20 @@ function RightBar(props) {
         <div className="mb-5">
           <h2 className="font-semibold">Amigos en línea</h2>
           {
-            Array.from({ length: 6 }).map((_, i) => (
-              <div key={i} className="flex items-center gap-2 mb-2">
-                <div className="avatar online">
-                  <div className="w-10 rounded-full">
-                    <img src={person1} alt="person"/>
+            Users.map(({
+              id,
+              username,
+              profilePicture
+            }) => (
+             
+                <div key={id} className="flex items-center gap-2 mb-2">
+                  <div className="avatar online">
+                    <div className="w-10 rounded-full">
+                      <img src={profilePicture} alt="person"/>
+                    </div>
                   </div>
+                  <h2 className="font-semibold">{username}</h2>
                 </div>
-                <h2 className="font-semibold">Pedro Suarez</h2>
-              </div>
             ))
           }
         </div>
