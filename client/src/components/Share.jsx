@@ -70,6 +70,10 @@ function Share() {
                 </span>
               </div>
             </div>
+            <div className="divider"></div>
+            <button className="btn btn-primary w-full mt-2 lg:w-auto">
+                Publicar
+            </button>
           </div>
         </div>
 
