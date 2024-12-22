@@ -1,12 +1,11 @@
-import { useEffect, useState } from "react";
-import PropTypes from "prop-types";
-import { Users } from "../utils/dummyData.js";
+import {useEffect, useState} from "react";
+import PropTypes from 'prop-types';
 import {
   MdOutlineRssFeed,
   MdMessage,
   MdOutlineVideoLibrary,
   MdGroups,
-  MdOutlineWork,
+  MdOutlineWork
 } from "react-icons/md";
 
 function Sidebar(props) {
@@ -60,17 +59,19 @@ function Sidebar(props) {
           </a>
         </li>
       </ul>
-      <button className="btn btn-neutral my-4 w-full">Ver más</button>
+      <button className="btn btn-neutral my-4 w-full">
+        Ver más
+      </button>
       <div className="divider"></div>
       <div className="p-4">
         <h1 className="text-lg font-bold mb-4">Amigos</h1>
-        {Users.map(({ id, profilePicture, username }) => (
-          <div key={id} className="flex items-center space-x-4 my-2">
+        {["John Doe", "Jane Doe", "Alice Smith","John Doe", "Jane Doe", "Alice Smith","John Doe", "Jane Doe", "Alice Smith","John Doe", "Jane Doe", "Alice Smith","John Doe", "Jane Doe", "Alice Smith","John Doe", "Jane Doe", "Alice Smith","John Doe", "Jane Doe", "Alice Smith"].map((name, index) => (
+          <div key={index} className="flex items-center space-x-4 my-2">
             <div className="avatar">
               <div className="w-9 rounded-full">
-                <img src={profilePicture}/>
-              </div>
-              <span className="ml-2 text-base m-auto">{username}</span>
+                <img src="https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp" />
+              </div> 
+              <span className="ml-2 text-base m-auto">{name}</span>
             </div>
           </div>
         ))}
