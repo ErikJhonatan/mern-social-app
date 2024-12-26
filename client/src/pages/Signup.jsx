@@ -50,12 +50,6 @@ function Signup() {
   const [isOpen, setIsOpen] = useState(false);
   const [selectedImage, setSelectedImage] = useState(null);
 
-  const files = acceptedFiles.map(file => (
-    <li key={file.path}>
-      {file.path} - {file.size} bytes
-    </li>
-  ));
-
   const onSubmit = (data) => {
     if (!profileImage) {
       setError('profileImage', {
