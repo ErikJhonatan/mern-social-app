@@ -23,7 +23,12 @@ mongoose.connect(process.env.MONGO_URL).then(() => console.log('Connected to Mon
 app.use(express.json());
 app.use(helmet()); // sirve para proteger la app de ciertos ataques en la web ejemplos: xss, clickjacking, etc
 app.use(morgan('common')); // sirve para ver las peticiones que se hacen a la app
-app.use(cors());
+app.use(cors(
+  {
+    origin: 'http://localhost:5173' || 'https://social.erikjhonatan.dev',
+    credentials: true
+  }
+));
 app.use(cookieParser());
 app.use(AuthMiddleware);
 app.use(checkUserExists);
