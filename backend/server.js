@@ -25,7 +25,7 @@ app.use(helmet()); // sirve para proteger la app de ciertos ataques en la web ej
 app.use(morgan('common')); // sirve para ver las peticiones que se hacen a la app
 app.use(cors(
   {
-    origin: 'http://localhost:5173' || 'https://social.erikjhonatan.dev',
+    origin: 'http://localhost:5173' || process.env.FRONTEND_URL,
     credentials: true
   }
 ));
