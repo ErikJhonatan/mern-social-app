@@ -38,7 +38,12 @@ authRouter.post('/login', async (req, res, next) => {
     }
     const token = jwt.sign({ id: user._id }, process.env.SECRET_KEY, { expiresIn: '1d' });
     console.log(token);
-    res.cookie('token', token, { httpOnly: true, sameSite: 'strict', maxAge: 24 * 60 * 60 * 1000 });
+    res.cookie('token', token, { 
+      path: '/',
+      httpOnly: true, 
+      sameSite: 'strict', 
+      maxAge: 24 * 60 * 60 * 1000 
+    });
     
     const { password, ...userData } = user._doc;
     res.status(200).json(userData);
