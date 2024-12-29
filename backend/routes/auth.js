@@ -41,7 +41,7 @@ authRouter.post('/login', async (req, res, next) => {
     res.cookie('token', token, { 
       path: '/',
       httpOnly: true, 
-      sameSite: 'strict', 
+      sameSite: 'none', 
       maxAge: 24 * 60 * 60 * 1000 
     });
     
