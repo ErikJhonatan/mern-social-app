@@ -1,8 +1,15 @@
 import { IoMdSearch, IoMdNotifications } from "react-icons/io";
 import { LuMessageSquareText } from "react-icons/lu";
 import { FaUser } from "react-icons/fa";
+import { useContext, useState } from "react";
+import { AuthContext } from "../context/AuthProvider";
 
-function topbar() {
+function Topbar() {
+
+  const {user, logout} = useContext(AuthContext);
+  const [search, setSearch] = useState("");
+  const [isLogout, setIsLogout] = useState(false);
+
   const showSearchModal = () => {
     const modal = document.getElementById("my_modal_search");
     modal.showModal();
@@ -144,8 +151,17 @@ function topbar() {
             <li>
               <a>Configuración</a>
             </li>
-            <li>
-              <a>Cerrar sesión</a>
+            <li
+            onClick={async () =>{
+              if (!isLogout) {
+                setIsLogout(true);
+                await logout();
+                setIsLogout(false);
+              }
+            }}
+            >
+              <a>Cerrar sesión{isLogout && <span className="loading loading-spinner text-neutral"></span>}</a>
+              
             </li>
           </ul>
         </div>
@@ -170,4 +186,4 @@ function topbar() {
   );
 }
 
-export default topbar;
+export default Topbar;

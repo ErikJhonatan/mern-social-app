@@ -40,8 +40,8 @@ function AuthProvider({children}) {
     return response;
   };
 
-  const logout = () => {
-    authLogout(setUser, setIsAuthenticated);
+  const logout = async () => {
+    await authLogout(setUser, setIsAuthenticated);
   };
 
   const data = { user, isAuthenticated, login, logout, loadingAuth };

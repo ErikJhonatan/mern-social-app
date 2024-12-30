@@ -16,12 +16,13 @@ const authLogin = async (data, setUser, setIsAuthenticated) => {
   }
 }
 
-const authLogout = (setUser, setIsAuthenticated) => {
+const authLogout = async (setUser, setIsAuthenticated) => {
   try {
-    setUser(null);
-    setIsAuthenticated(false);
-    Cookies.remove('token');
-    axiosInstance.get('/auth/logout');
+    const result = await axiosInstance.get('/auth/logout');
+    if (result.status === 200) {
+      setIsAuthenticated(false);
+      setUser(null);
+    }
   } catch (error) {
     console.error(error);
   }

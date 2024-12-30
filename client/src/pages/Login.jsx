@@ -1,7 +1,7 @@
 import { useForm } from "react-hook-form";
 import { Link } from "react-router";
 import LoginImg from "/img/login-img.jpg";
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import { AuthContext } from "../context/AuthProvider";
 
 function Login() {
@@ -9,17 +9,21 @@ function Login() {
   const { login } = useContext(AuthContext);
 
   const { register, handleSubmit, formState: { errors } } = useForm();
+  
+  const [loadingLogin, setLoadingLogin] = useState(false);
 
   const onSubmit = async (credentials) => {
+    setLoadingLogin(true);
     const loginData = await login(credentials);
     const { status } = loginData;
     if (status === 401) {
       console.log('Usuario o contraseña incorrectos');
+      setLoadingLogin(false);
     }
     if (status === 404) {
       console.log('Usuario no encontrado');
+      setLoadingLogin(false);
     }
-
   };
 
   return (
@@ -113,7 +117,11 @@ function Login() {
               </label>
             </div>
             <div className="form-control mt-6">
-              <button className="btn btn-primary">Iniciar sesión</button>
+              <button className="btn btn-primary" disabled={loadingLogin}>
+                Iniciar sesión {
+                  loadingLogin && <span className="loading loading-spinner text-white"></span>
+                }
+              </button>
             </div>
           </form>
           <div className="divider">OR</div>
