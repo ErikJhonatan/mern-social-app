@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react';
 import { Link } from 'react-router';
 import { PhotoProvider, PhotoView } from 'react-photo-view';
 import { useForm } from 'react-hook-form';
+import SignupImg from '/img/signup-img.jpg';
 import 'react-photo-view/dist/react-photo-view.css';
 
 function Signup() {
@@ -69,7 +70,7 @@ function Signup() {
       <div className="card lg:card-side bg-base-100 shadow-xl max-w-4xl w-full">
         <figure className="lg:w-1/2">
           <img
-            src="https://picsum.photos/seed/login/800/600"
+            src={SignupImg}
             alt="Random image"
             className="object-cover w-full h-full"
           />
@@ -152,7 +153,7 @@ function Signup() {
                 <input
                   type="password"
                   className="grow"
-                  placeholder="Enter password"
+                  placeholder="Ingresa tu contraseña"
                   {...register('password', {
                     required: 'La contraseña es requerida',
                     minLength: { value: 6, message: 'Mínimo 6 caracteres' },
