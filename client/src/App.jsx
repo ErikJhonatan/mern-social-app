@@ -18,16 +18,16 @@ import Login from './pages/Login'
 import Signup from './pages/Signup'
 
 const ComprobatedLogin = () => {
-  const { isAuthenticated } = useContext(AuthContext);
-  if (isAuthenticated) {
+  const { isAuthenticated, loadingAuth } = useContext(AuthContext);
+  if (isAuthenticated && !loadingAuth) {
     return <Navigate to="/home" />;
   }
   return <Outlet />;
 };
 
 const ProtectedRoute = () => {
-  const { isAuthenticated } = useContext(AuthContext);
-  if (!isAuthenticated) {
+  const { isAuthenticated, loadingAuth } = useContext(AuthContext);
+  if (!isAuthenticated && !loadingAuth) {
     return <Navigate to="/login" />;
   }
   return <Outlet />;

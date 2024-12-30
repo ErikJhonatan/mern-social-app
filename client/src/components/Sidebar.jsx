@@ -15,7 +15,6 @@ function Sidebar(props) {
   useEffect(() => {
     const topBar = document.querySelector(".topbar");
     setTopBarOffsetWidth(topBar.offsetHeight);
-    console.log(topBar.offsetHeight);
     const sidebar = document.querySelector(".sidebar-app");
     sidebar.style.height = `calc(100vh - ${topBarOffsetWidth}px)`;
   }, [topBarOffsetWidth]);

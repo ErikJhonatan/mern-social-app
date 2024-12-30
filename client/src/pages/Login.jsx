@@ -1,11 +1,25 @@
 import { useForm } from "react-hook-form";
 import { Link } from "react-router";
+import LoginImg from "/img/login-img.jpg";
+import { useContext } from "react";
+import { AuthContext } from "../context/AuthProvider";
 
 function Login() {
+
+  const { login } = useContext(AuthContext);
+
   const { register, handleSubmit, formState: { errors } } = useForm();
 
-  const onSubmit = (data) => {
-    console.log(data);
+  const onSubmit = async (credentials) => {
+    const loginData = await login(credentials);
+    const { status } = loginData;
+    if (status === 401) {
+      console.log('Usuario o contraseña incorrectos');
+    }
+    if (status === 404) {
+      console.log('Usuario no encontrado');
+    }
+
   };
 
   return (
@@ -16,7 +30,7 @@ function Login() {
       <div className="card lg:card-side bg-base-100 shadow-xl max-w-4xl w-full">
         <figure className="lg:w-1/2">
           <img
-            src="https://picsum.photos/seed/login/800/600"
+            src={LoginImg}
             alt="Random image"
             className="object-cover w-full h-full"
           />
