@@ -41,10 +41,11 @@ authRouter.post('/login', async (req, res, next) => {
     res.cookie('token', token, { 
       path: '/',
       httpOnly: true, 
-      sameSite: 'none', 
-      maxAge: 24 * 60 * 60 * 1000 
+      sameSite: 'lax',
+      maxAge: 24 * 60 * 60 * 1000, // 1 día
+      secure: process.env.NODE_ENV === 'production' ? true : false, // Solo en producción
+      domain: 'localhost' // Solo en desarrollo
     });
-    
     const { password, ...userData } = user._doc;
     res.status(200).json(userData);
 
