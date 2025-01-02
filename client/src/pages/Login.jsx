@@ -1,16 +1,26 @@
 import { useForm } from "react-hook-form";
 import { Link } from "react-router";
+import { CiCircleInfo } from "react-icons/ci";
+import { MdErrorOutline } from "react-icons/md";
 import LoginImg from "/img/login-img.jpg";
 import { useContext, useState } from "react";
 import { AuthContext } from "../context/AuthProvider";
 
 function Login() {
 
+  const [alertLogin, setAlertLogin] = useState({ show: false, message: '', type: '' });
+
   const { login } = useContext(AuthContext);
 
   const { register, handleSubmit, formState: { errors } } = useForm();
   
   const [loadingLogin, setLoadingLogin] = useState(false);
+
+  const hideAlert = () => {
+    setTimeout(() => {
+      setAlertLogin({ ...alertLogin, show: false });
+    }, 1000);
+  };
 
   const onSubmit = async (credentials) => {
     setLoadingLogin(true);
@@ -19,10 +29,14 @@ function Login() {
     if (status === 401) {
       console.log('Usuario o contraseña incorrectos');
       setLoadingLogin(false);
+      setAlertLogin({ show: true, message: 'Usuario o contraseña incorrectos', type: 'error' });
+      hideAlert();
     }
     if (status === 404) {
       console.log('Usuario no encontrado');
       setLoadingLogin(false);
+      setAlertLogin({ show: true, message: 'Usuario no encontrado', type: 'error' });
+      hideAlert();
     }
   };
 
@@ -118,9 +132,10 @@ function Login() {
             </div>
             <div className="form-control mt-6">
               <button className="btn btn-primary" disabled={loadingLogin}>
-                Iniciar sesión {
-                  loadingLogin && <span className="loading loading-spinner text-white"></span>
-                }
+              {
+                loadingLogin && <span className="loading loading-spinner text-white"></span>
+              }
+                Iniciar sesión 
               </button>
             </div>
           </form>
@@ -133,6 +148,20 @@ function Login() {
           </div>
         </div>
       </div>
+      {
+        alertLogin.show &&
+        <div role="alert" className={`alert alert-error fixed bottom-2 transition-opacity duration-1000 ${alertLogin.show ? 'opacity-100' : 'opacity-0'}`}>
+        {
+          alertLogin.type === 'info' && <CiCircleInfo className="alert-icon w-6" />
+        }
+        {
+          alertLogin.type === 'error' && <MdErrorOutline className="alert-icon w-6" />
+        }
+        <span>
+          {alertLogin.message}
+        </span>
+      </div>
+      }
     </div>
   );
 }

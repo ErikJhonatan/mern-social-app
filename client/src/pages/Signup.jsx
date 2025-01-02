@@ -1,12 +1,17 @@
 import { useDropzone } from 'react-dropzone';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useContext } from 'react';
 import { Link } from 'react-router';
 import { PhotoProvider, PhotoView } from 'react-photo-view';
 import { useForm } from 'react-hook-form';
 import SignupImg from '/img/signup-img.jpg';
 import 'react-photo-view/dist/react-photo-view.css';
+import { AuthContext } from '../context/AuthProvider';
 
 function Signup() {
+  const { registerUser } = useContext(AuthContext);
+
+  const [alertSignup, setAlertSignup] = useState({ show: false, messages: [], type: '' });
+
   const { register, handleSubmit, formState: { errors }, setError, clearErrors } = useForm();
 
   const [profileImage, setProfileImage] = useState(null);
@@ -51,7 +56,7 @@ function Signup() {
   const [isOpen, setIsOpen] = useState(false);
   const [selectedImage, setSelectedImage] = useState(null);
 
-  const onSubmit = (data) => {
+  const onSubmit = async (data) => {
     if (!profileImage) {
       setError('profileImage', {
         type: 'custom',
@@ -59,8 +64,39 @@ function Signup() {
       });
       return;
     }
-    console.log({ ...data, profileImage });
+    const formData = new FormData();
+    formData.append('username', data.username);
+    formData.append('email', data.email);
+    formData.append('password', data.password);
+    formData.append('profileImage', profileImage);
+    try {
+    await registerUser(formData);
+    setAlertSignup({
+      show: true,
+      messages: ['Usuario registrado con éxito 🎉'],
+      type: 'success'
+    });
+    } catch (error) {
+
+    const statusServer = {
+        400:(error) => {
+          setAlertSignup({
+            show: true,
+            messages: error.response.data.errors,
+            type: 'error'
+          });
+        },
+        500:(error) => {
+          setAlertSignup({
+            show: true,
+            messages: ['Error del servidor'],
+            type: 'error'
+          });
+        },
+    }
+    statusServer[error.response.status](error);     
   };
+};
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-base-200 p-4">
