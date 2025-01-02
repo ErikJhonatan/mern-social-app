@@ -2,16 +2,31 @@ import router from 'express';
 import User from '../models/User.js';
 import httpStatusCodes from 'http-status-codes';
 import jwt from 'jsonwebtoken';
+import cloudinary from '../config/cloudinary.config.js';
+import upload from '../middlewares/uploadMiddleware.js';
+import { unlink } from 'fs/promises';
 
 const authRouter = router.Router();
 
 // Register
-authRouter.post('/register', async (req, res, next) => {
+authRouter.post('/register', upload.single('profileImg'), async (req, res, next) => {
   try {
     const user = new User(req.body);
+    
     const savedUser = await user.save();
-    const { password, ...userData } = savedUser._doc;
-    res.status(200).json(userData);
+  
+    let imageUrl = '';
+    if (req.file) {
+      const result = await cloudinary.uploader.upload(req.file.path, {
+        folder: 'users',
+        crop: "scale"
+      });
+      imageUrl = result.secure_url;
+    }
+    const updated = await User.findByIdAndUpdate(savedUser._id, { profilePicture: imageUrl }, { new: true });
+    const { password, ...userData } = updated._doc;
+    await unlink(req.file.path);
+    res.status(201).json(userData);
   } catch (err) {
     if (err.name === 'ValidationError') {
       const errors = Object.values(err.errors).map((e) => e.message);  
