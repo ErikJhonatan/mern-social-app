@@ -16,6 +16,7 @@ import Home from './pages/Home'
 import Profile from './pages/Profile'
 import Login from './pages/Login'
 import Signup from './pages/Signup'
+import NotFound from './pages/NotFound'
 
 const ComprobatedLogin = () => {
   const { isAuthenticated, loadingAuth } = useContext(AuthContext);
@@ -48,6 +49,7 @@ function App() {
             <Route path="/home" element={<Home />} />
             <Route path="/profile" element={<Profile />} />
           </Route>
+          <Route path="*" element={<NotFound/>} />
         </Routes>
       </Router>
     </AuthProvider>
