@@ -28,6 +28,16 @@ const authLogout = async (setUser, setIsAuthenticated) => {
   }
 };
 
+const authRegister = async (data) => {
+  try {
+    const response = await axiosInstance.post('/auth/register', data);
+    return response;
+  } catch (error) {
+    console.error(error);
+    return error;
+  }
+};
+
 const isLoggedIn = async () => {
   try {   
     const response = await axiosInstance.get('/auth/is-logged-in');
@@ -65,4 +75,5 @@ export {
   authLogout,
   isLoggedIn,
   authMe,
+  authRegister,
 }
