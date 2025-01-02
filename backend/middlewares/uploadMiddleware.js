@@ -1,12 +1,17 @@
 import multer from 'multer';
 import path from 'path';
+import { mkdirSync } from 'node:fs';
+import { randomUUID } from 'node:crypto';
+
+const uploadDirectory = path.resolve('uploads/users');
+mkdirSync(uploadDirectory, { recursive: true });
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, 'uploads/users');
+    cb(null, uploadDirectory);
   },
   filename: (req, file, cb) => {
-    const uniqueName = `${Date.now()}-${Math.random().toString(36).substring(7)}`;
+    const uniqueName = randomUUID();
     cb(null, uniqueName + path.extname(file.originalname));
   }
 });

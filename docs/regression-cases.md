@@ -1,0 +1,11 @@
+# Regression cases
+
+Prepared for this change. **Not executed.** Tests, manual checks, lint and builds require explicit user authorization. Use isolated fixtures; never run destructive cases against production.
+
+| Case | Input or setup | Expected outcome |
+| --- | --- | --- |
+| Post authorization | A valid session for user A updates/deletes a post owned by B | 401; the post remains unchanged |
+| Input validation | POST /api/posts with empty body, 501-character desc, invalid image URL or userId B | 400; no post created |
+| Identity | Delete a different user with a non-admin session; repeat with a deleted account JWT | 401; no mutation |
+| Uploads | Registration with an uploaded image fails validation or database save | Temporary file removed; uploaded Cloudinary asset removed if user was not saved |
+| Password | Save an unchanged existing password then log in | Password is not hashed twice; responses omit password |

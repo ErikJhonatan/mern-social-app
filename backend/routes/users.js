@@ -1,9 +1,14 @@
 import router from 'express';
 import User from '../models/User.js';
-import jwt from 'jsonwebtoken';
+import mongoose from 'mongoose';
 import httpStatusCodes from 'http-status-codes';
 
-const UsersRouter = router();
+const UsersRouter = router.Router();
+UsersRouter.use((req, res, next) => {
+  const id = req.path.split('/')[1];
+  if (!mongoose.isObjectIdOrHexString(id)) return res.status(400).json({ message: 'ID de usuario inválido' });
+  next();
+});
 
 // Get user
 UsersRouter.get('/:id', async (req, res, next) => {
@@ -13,7 +18,8 @@ UsersRouter.get('/:id', async (req, res, next) => {
     if (!user) {
       return res.status(httpStatusCodes.NOT_FOUND).json({ message: "Usuario no encontrado" });
     }
-    res.json(user);
+    const { password, ...publicUser } = user.toObject();
+    res.json(publicUser);
   } catch (error) {
     next(error);
   }
@@ -22,10 +28,10 @@ UsersRouter.get('/:id', async (req, res, next) => {
 // Delete User
 UsersRouter.delete('/:id', async (req, res, next) => {
   try {
-    const { _id, isAdmin } = req.auth;
+    const { id: actorId } = req.auth;
     const { id } = req.params;
     
-    if (id !== _id && !isAdmin) {
+    if (id !== actorId && !req.user.isAdmin) {
       return res.status(httpStatusCodes.UNAUTHORIZED).json({
         message: "No puedes eliminar este usuario"
       });
@@ -35,7 +41,8 @@ UsersRouter.delete('/:id', async (req, res, next) => {
     if (!deletedUser) {
       return res.status(httpStatusCodes.NOT_FOUND).json({ message: "Usuario no encontrado" });
     }
-    res.json(deletedUser);
+    const { password, ...publicUser } = deletedUser.toObject();
+    res.json(publicUser);
   } catch (error) {
     next(error);
   }
@@ -44,7 +51,6 @@ UsersRouter.delete('/:id', async (req, res, next) => {
 // Follow User
 UsersRouter.post('/:followId/follow', async (req, res, next) => {
   try {
-    console.log(req.auth);
     const {id} = req.auth;
     const { followId } = req.params;
     res.json(await User.followUser(id, followId));

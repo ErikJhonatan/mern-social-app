@@ -107,7 +107,7 @@ const UserSchema = new mongoose.Schema(
 
 UserSchema.pre("save", async function (next) {
   if (!this.isModified("password")) {
-    next();
+    return next();
   }
   this.password = await bcrypt.hash(this.password, 12);
   next();
@@ -118,15 +118,13 @@ UserSchema.methods.comparePassword = async function (enteredPassword) {
 };
 
 UserSchema.statics.getUser = async function (userId) {
-  try {
-    const user = await this.findById(userId);
-    if (!user) {
-      throw new Error("Usuario no encontrado");
-    }
-    return user;
-  } catch (err) {
-    throw new Error(err.message || "Error al obtener el usuario");
+  const user = await this.findById(userId);
+  if (!user) {
+    const error = new Error('Usuario no encontrado');
+    error.status = httpStatusCodes.NOT_FOUND;
+    throw error;
   }
+  return user;
 };
 
 UserSchema.statics.updateUser = async function (userId, updateData) {
@@ -135,7 +133,7 @@ UserSchema.statics.updateUser = async function (userId, updateData) {
       updateData.password = await bcrypt.hash(updateData.password, 12);
     return await this.findByIdAndUpdate(userId, updateData, { new: true });
   } catch (err) {
-    next(err);
+    throw err;
   }
 };
 
@@ -149,7 +147,7 @@ UserSchema.statics.deleteUser = async function (userId) {
     }
     return user;
   } catch (err) {
-    next(err);
+    throw err;
   }
 };
 
@@ -169,8 +167,8 @@ UserSchema.statics.followUser = async function (userId, followId) {
   }
 
   if (!user.followings.includes(followId)) {
-    await user.updateOne({ $push: { followings: followId } });
-    await followUser.updateOne({ $push: { followers: userId } });
+    await user.updateOne({ $addToSet: { followings: followId } });
+    await followUser.updateOne({ $addToSet: { followers: userId } });
     return true;
   } else {
     const err = new Error("Ya sigues a este usuario");
