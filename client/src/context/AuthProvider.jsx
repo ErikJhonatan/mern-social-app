@@ -6,6 +6,7 @@ import {
   authLogout,
   isLoggedIn,
   authMe,
+  authRegister,
 } from '../services/Auth';
 
 
@@ -41,10 +42,14 @@ function AuthProvider({children}) {
   };
 
   const logout = async () => {
-    await authLogout(setUser, setIsAuthenticated);
+    return await authLogout(setUser, setIsAuthenticated);
   };
 
-  const data = { user, isAuthenticated, login, logout, loadingAuth };
+  const registerUser = async (data) => {
+    return await authRegister(data);  
+  };
+
+  const data = { user, isAuthenticated, login, logout, loadingAuth , registerUser };
 
   return <AuthContext.Provider value={data}>{children}</AuthContext.Provider>;
 
