@@ -38,16 +38,18 @@ function Post(props) {
           </div>
 
           {/* Post top right */}
-          <div>
-            <details className="dropdown">
-              <summary className="btn btn-circle">
-                <SlOptionsVertical className="text-2xl text-gray-500" />
-              </summary>
-              <ul className="menu dropdown-content bg-base-100 rounded-box z-[1] w-24 p-2 shadow">
-                <li><a>Compartir</a></li>
-                <li><a>Reportar</a></li>
-              </ul>
-            </details>
+         
+          <div className="dropdown dropdown-end">
+            <div tabIndex={0} role="button" className="btn btn-circle">
+              <SlOptionsVertical className="text-2xl text-gray-500" />
+            </div>
+            <ul 
+              tabIndex={0}
+              className="menu dropdown-content bg-base-100 rounded-box w-auto p-2 shadow"
+            >
+              <li><a>Compartir</a></li>
+              <li><a>Reportar</a></li>
+            </ul>
           </div>
         </div>
 
