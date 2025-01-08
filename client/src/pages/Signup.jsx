@@ -64,13 +64,17 @@ function Signup() {
       });
       return;
     }
+
     const formData = new FormData();
+    // Asegúrate que el nombre del campo coincida con el backend
+    formData.append('profileImage', profileImage);
     formData.append('username', data.username);
     formData.append('email', data.email);
     formData.append('password', data.password);
-    formData.append('profileImage', profileImage);
+
     try {
-    await registerUser(formData);
+      console.log('Enviando archivo:', profileImage); // Debug
+      await registerUser(formData);
     setAlertSignup({
       show: true,
       messages: ['Usuario registrado con éxito 🎉'],
@@ -113,7 +117,7 @@ function Signup() {
         </figure>
         <div className="card-body lg:w-1/2">
           <h2 className="card-title text-2xl font-bold mb-6">Registrarse</h2>
-          <form onSubmit={handleSubmit(onSubmit)} noValidate>
+          <form onSubmit={handleSubmit(onSubmit)} noValidate encType="multipart/form-data">
             <div className="form-control">
               <label className="label">
                 <span className="label-text">Nombre de usuario</span>
@@ -289,6 +293,16 @@ function Signup() {
           </div>
         </div>
       </div>
+      {
+        alertSignup.show &&
+        <div role="alert" className={`alert alert-${alertSignup.type} fixed bottom-2 transition-opacity duration-1000 ${alertSignup.show ? 'opacity-100' : 'opacity-0'}`}>
+          {
+            alertSignup.messages.map((message, index) => (
+              <span key={index}>{message}</span>
+            ))
+          }
+        </div>
+      }
     </div>
   );
 }

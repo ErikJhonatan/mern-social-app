@@ -30,7 +30,12 @@ const authLogout = async (setUser, setIsAuthenticated) => {
 
 const authRegister = async (data) => {
   try {
-    const response = await axiosInstance.post('/auth/register', data);
+    const response = await axiosInstance.post('/auth/register', data, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      }
+      
+    } );
     return response;
   } catch (error) {
     console.error(error);
