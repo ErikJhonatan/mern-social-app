@@ -9,29 +9,44 @@ import { unlink } from 'fs/promises';
 const authRouter = router.Router();
 
 // Register
-authRouter.post('/register', upload.single('profileImg'), async (req, res, next) => {
+authRouter.post('/register', upload.single('profileImage'), async (req, res, next) => {
   try {
+    if (!req.file || !req.file.path) {
+      return res.status(400).json({ 
+        errors: ['La imagen de perfil es requerida'] 
+      });
+    }
+
     const user = new User(req.body);
     
+    const result = await cloudinary.uploader.upload(req.file.path);
+    user.profilePicture = result.secure_url;
+    
     const savedUser = await user.save();
-  
-    let imageUrl = '';
-    if (req.file) {
-      const result = await cloudinary.uploader.upload(req.file.path, {
-        folder: 'users',
-        crop: "scale"
-      });
-      imageUrl = result.secure_url;
-    }
-    const updated = await User.findByIdAndUpdate(savedUser._id, { profilePicture: imageUrl }, { new: true });
-    const { password, ...userData } = updated._doc;
     await unlink(req.file.path);
+
+    const { password, ...userData } = savedUser._doc;
     res.status(201).json(userData);
+
   } catch (err) {
-    if (err.name === 'ValidationError') {
-      const errors = Object.values(err.errors).map((e) => e.message);  
-      err = {message: errors, status: httpStatusCodes.BAD_REQUEST };
+    if (req.file) {
+      try {
+        if(user) {
+          await user.remove();
+        }
+        await unlink(req.file.path);
+        await cloudinary.uploader.destroy(result.public_id);
+        await cloudinary.uploader.destroy(result.public_id, { resource_type: 'raw' });
+      } catch (unlinkError) {
+        console.error('Error eliminando archivo temporal:', unlinkError);
+      }
     }
+
+    if (err.name === 'ValidationError') {
+      const errors = Object.values(err.errors).map((e) => e.message);
+      return res.status(400).json({ errors });
+    }
+    
     next(err);
   }
 });

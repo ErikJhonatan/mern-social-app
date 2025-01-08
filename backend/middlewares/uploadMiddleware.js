@@ -1,23 +1,28 @@
 import multer from 'multer';
-
+import path from 'path';
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
     cb(null, 'uploads/users');
   },
   filename: (req, file, cb) => {
-    cb(null, req.body.username);
+    const uniqueName = `${Date.now()}-${Math.random().toString(36).substring(7)}`;
+    cb(null, uniqueName + path.extname(file.originalname));
   }
 });
 
-const fileFilter = (req, file, cb) => {
-  if (file.mimetype === 'image/jpeg' || file.mimetype === 'image/png') {
+const upload = multer({ 
+  storage: storage,
+  limits: { fileSize: 5 * 1024 * 1024 }, // 5MB
+  fileFilter: (req, file, cb) => {
+    const allowedTypes = ['image/jpeg', 'image/png'];
+    if (!allowedTypes.includes(file.mimetype)) {
+      const error = new Error('Tipo de archivo no válido');
+      error.code = 'INVALID_FILE_TYPE';
+      return cb(error, false);
+    }
     cb(null, true);
-  } else {
-    cb(null, false);
   }
-};
-
-const upload = multer({ storage: storage, fileFilter: fileFilter });
+});
 
 export default upload;
