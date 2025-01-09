@@ -38,8 +38,7 @@ const authRegister = async (data) => {
     } );
     return response;
   } catch (error) {
-    console.error(error);
-    return error;
+    throw error.response || error;
   }
 };
 
