@@ -19,7 +19,10 @@ authRouter.post('/register', upload.single('profileImage'), async (req, res, nex
 
     const user = new User(req.body);
     
-    const result = await cloudinary.uploader.upload(req.file.path);
+    const result = await cloudinary.uploader.upload(req.file.path, {
+      folder: 'users',
+      crop: 'scale',
+    });
     user.profilePicture = result.secure_url;
     
     const savedUser = await user.save();
