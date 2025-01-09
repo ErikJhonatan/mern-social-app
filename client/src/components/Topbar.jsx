@@ -138,7 +138,13 @@ function Topbar() {
         <div className="dropdown dropdown-end">
           <div tabIndex={0} role="button" className="avatar online">
             <div className="w-10 rounded-full">
-              <img src="https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp" />
+              {
+                user?
+                <img src={user.profilePicture} alt="avatar" />
+                :
+                <div className="skeleton w-10 h-10 rounded-full">
+                </div>
+              }
             </div>
           </div>
           <ul
