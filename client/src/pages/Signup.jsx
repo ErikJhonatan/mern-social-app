@@ -6,6 +6,9 @@ import { useForm } from 'react-hook-form';
 import SignupImg from '/img/signup-img.jpg';
 import 'react-photo-view/dist/react-photo-view.css';
 import { AuthContext } from '../context/AuthProvider';
+import { CiCircleInfo } from 'react-icons/ci';
+import { MdErrorOutline } from 'react-icons/md';
+import { FaRegCheckCircle } from "react-icons/fa";
 
 function Signup() {
   const { registerUser } = useContext(AuthContext);
@@ -16,6 +19,12 @@ function Signup() {
 
   const [profileImage, setProfileImage] = useState(null);
   const [imageUrl, setImageUrl] = useState(null);
+
+  const hideAlert = () => {
+    setTimeout(() => {
+      setAlertSignup({ ...setAlertSignup, show: false });
+    }, 1000);
+  };
   
   const { getRootProps, getInputProps, acceptedFiles } = useDropzone({
     accept: {
@@ -71,24 +80,23 @@ function Signup() {
     formData.append('username', data.username);
     formData.append('email', data.email);
     formData.append('password', data.password);
-
     try {
-      console.log('Enviando archivo:', profileImage); // Debug
-      await registerUser(formData);
-    setAlertSignup({
-      show: true,
-      messages: ['Usuario registrado con éxito 🎉'],
-      type: 'success'
-    });
+      const response = await registerUser(formData);
+      setAlertSignup({
+        show: true,
+        messages: ['Usuario registrado con éxito'],
+        type: 'success'
+      });
+      hideAlert();
     } catch (error) {
-
     const statusServer = {
         400:(error) => {
           setAlertSignup({
             show: true,
-            messages: error.response.data.errors,
+            messages: error.data.errors,
             type: 'error'
           });
+          hideAlert();
         },
         500:(error) => {
           setAlertSignup({
@@ -96,9 +104,19 @@ function Signup() {
             messages: ['Error del servidor'],
             type: 'error'
           });
+          hideAlert();
         },
+        // cualquier otro código de estado
+        default: (error) => {
+          setAlertSignup({
+            show: true,
+            messages: ['Error desconocido'],
+            type: 'error'
+          });
+          hideAlert();
+        }
     }
-    statusServer[error.response.status](error);     
+    statusServer[error.status](error);
   };
 };
 
@@ -130,7 +148,7 @@ function Signup() {
                   {...register('username', {
                     required: 'El nombre de usuario es requerido',
                     minLength: { value: 3, message: 'Mínimo 3 caracteres' },
-                    maxLength: { value: 20, message: 'Máximo 20 caracteres' }
+                    maxLength: { value: 50, message: 'Máximo 20 caracteres' }
                   })}
                 />
               </label>
@@ -294,14 +312,33 @@ function Signup() {
         </div>
       </div>
       {
+      
         alertSignup.show &&
-        <div role="alert" className={`alert alert-${alertSignup.type} fixed bottom-2 transition-opacity duration-1000 ${alertSignup.show ? 'opacity-100' : 'opacity-0'}`}>
-          {
-            alertSignup.messages.map((message, index) => (
-              <span key={index}>{message}</span>
-            ))
+        alertSignup.messages.map((message, index) => {
+          if(alertSignup.type === 'success'){
+          return <div role="alert" className={`alert alert-success fixed bottom-2 transition-opacity duration-1000 ${alertSignup.show ? 'opacity-100' : 'opacity-0'}`} key={index}>
+            <FaRegCheckCircle className="alert-icon w-6" />
+           <span>
+              {message}
+            </span>
+          </div>
           }
-        </div>
+          else if(alertSignup.type === 'error'){
+            return <div role="alert" className={`alert alert-error fixed bottom-2 transition-opacity duration-1000 ${alertSignup.show ? 'opacity-100' : 'opacity-0'}`} key={index}>
+            <MdErrorOutline className="alert-icon w-6" />
+            <span>
+              {message}
+            </span>
+          </div>
+          } else if(alertSignup.type === 'info'){
+            return <div role="alert" className={`alert alert-info fixed bottom-2 transition-opacity ${alertSignup.show ? 'opacity-100' : 'opacity-0'}`} key={index}>
+              <CiCircleInfo className="alert-icon w-6" />
+              <span>
+                {message}
+              </span>
+            </div>
+          }
+        })
       }
     </div>
   );
