@@ -3,8 +3,13 @@ import Sidebar from "../components/Sidebar";
 import Feed from "../components/Feed";
 import LIstFriends from "../components/LIstFriends";
 import ImgFrontPage from "/post/3.jpeg";
+import { useContext } from "react";
+import { AuthContext } from "../context/AuthProvider";
 
 function Profile(){
+
+  const { user } = useContext(AuthContext);
+
   return (
     <>
       <Topbar />
@@ -17,9 +22,17 @@ function Profile(){
             {/* Avatar center */}
             <div className="avatar flex items-center flex-col absolute bottom-0 left-1/2 transform -translate-x-1/2 translate-y-1/2">
               <div className="w-24 rounded-full ring ring-primary ring-offset-base-100 ring-offset-2">
-                <img src="https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp" />
+                {
+                  user ? (
+                    <img src={user?.profilePicture} alt="User" className="w-full h-full rounded-full" />
+                  ) : (
+                    <div className="skeleton h-24 w-24"></div>
+                  )
+                }
               </div>
-              <h1 className="mt-2 text-xl text-center font-bold">John Doe</h1>
+              <h1 className="mt-2 text-xl text-center font-bold">
+                {user?.username}
+              </h1>
               <p className="text-center text-sm text-gray-500 w-3/4 mx-auto">
                 Software engineer, who loves life and making new friends
               </p>
@@ -38,14 +51,14 @@ function Profile(){
               <div className="bg-white p-4 rounded-lg shadow">
                 <h1 className="text-xl font-bold">User Info</h1>
                 <div className="mt-4">
-                  <p className="text-sm text-gray-500">Username: <span className="text-gray-800 font-semibold">johndoe</span></p>
+                  <p className="text-sm text-gray-500">Username: <span className="text-gray-800 font-semibold">{user?.username}</span></p>
                   <p className="text-sm text-gray-500">Email: <span className="text-gray-800 font-semibold">
-                    lala@gmail.com
+                    {user?.email}
                   </span></p>
-                  <p className="text-sm text-gray-500">Location: <span className="text-gray-800 font-semibold">New York, USA</span></p>
+                  <p className="text-sm text-gray-500">Location: <span className="text-gray-800 font-semibold">Peru, Cusco</span></p>
                   <p className="text-sm text-gray-500">Phone: <span className="text-gray-800 font-semibold">+1 234 567 890</span></p>
-                  <p className="text-sm text-gray-500">Website: <span className="text-gray-800 font-semibold">johndoe.com</span></p>
-                  <p className="text-sm text-gray-500">Birthday: <span className="text-gray-800 font-semibold">01/01/1990</span></p>
+                  <p className="text-sm text-gray-500">Website: <span className="text-gray-800 font-semibold">erikjhonatan.dev</span></p>
+                  <p className="text-sm text-gray-500">Birthday: <span className="text-gray-800 font-semibold">22/01/2004</span></p>
                 </div>
               </div>
               {/* 

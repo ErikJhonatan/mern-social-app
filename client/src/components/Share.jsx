@@ -5,12 +5,14 @@ import { FaTag } from "react-icons/fa";
 import { MdEmojiEmotions } from "react-icons/md";
 import { FaLocationDot } from "react-icons/fa6";
 import { useForm } from "react-hook-form";
-import { useState } from "react";
+import { useState, useContext } from "react";
 import DialogAccept from "./DIalogAccept";
+import { AuthContext } from "../context/AuthProvider";
 
 const DialogAcceptContext = createContext();
 
 function Share() {
+  const { user } = useContext(AuthContext);
   const {
     register,
     handleSubmit,
@@ -45,11 +47,19 @@ function Share() {
         <div className="flex items-center gap-2 mb-4">
           <div className="avatar">
             <div className="w-16 rounded-full">
-              <img src={person1} alt="User Avatar" />
+              {
+                user? (
+                  <img src={user?.profilePicture} alt="User" className="w-full h-full rounded-full" />
+                ) : (
+                  <div className="skeleton h-16 w-16"></div>
+                )
+              }
             </div>
           </div>
           <div>
-            <h2 className="font-semibold">Pedro</h2>
+            <h2 className="font-semibold">
+              {user?.username}
+            </h2>
             <span className="text-gray-500">Publicar algo</span>
           </div>
         </div>
