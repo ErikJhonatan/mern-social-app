@@ -3,6 +3,7 @@ import { LuMessageSquareText } from "react-icons/lu";
 import { FaUser } from "react-icons/fa";
 import { useContext, useState } from "react";
 import { AuthContext } from "../context/AuthProvider";
+import { Link } from "react-router";
 
 function Topbar() {
 
@@ -40,7 +41,9 @@ function Topbar() {
             className="menu menu-sm dropdown-content bg-base-100 rounded-box z-[1] mt-3 w-52 p-2 shadow"
           >
             <li>
-              <a>Inicio</a>
+              <Link to="/home">
+                Inicio
+              </Link>
             </li>
             <li>
               <a>Timeline</a>
@@ -58,7 +61,9 @@ function Topbar() {
       <div className="navbar-end">
         <ul className="menu menu-horizontal px-1 hidden lg:flex">
           <li>
-            <a>Inicio</a>
+            <Link to="/home">
+                Inicio
+            </Link>
           </li>
           <li>
             <a>Timeline</a>
@@ -152,7 +157,9 @@ function Topbar() {
             className="menu dropdown-content bg-base-100 rounded-box w-52 p-2 shadow"
           >
             <li>
-              <a>Perfil</a>
+              <Link to="/profile">
+                Perfil
+              </Link>
             </li>
             <li>
               <a>Configuración</a>
