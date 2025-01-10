@@ -28,10 +28,8 @@ const ComprobatedLogin = () => {
 
 const ProtectedRoute = () => {
   const { isAuthenticated, loadingAuth } = useContext(AuthContext);
-  if (!isAuthenticated && !loadingAuth) {
-    return <Navigate to="/login" />;
-  }
-  return <Outlet />;
+  if (!isAuthenticated && !loadingAuth) return <Navigate to="/login" />;
+  else if(!loadingAuth) return <Outlet />;
 };
 
 
