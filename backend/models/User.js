@@ -72,7 +72,7 @@ const UserSchema = new mongoose.Schema(
     },
     desc: {
       type: String,
-      maxlength: [50, "La descripción no puede superar los 50 caracteres"],
+      maxlength: [100, "La descripción no puede superar los 100 caracteres"],
     },
     city: {
       type: String,
@@ -81,6 +81,17 @@ const UserSchema = new mongoose.Schema(
     from: {
       type: String,
       maxlength: [50, "El lugar de origen no puede superar los 50 caracteres"],
+    },
+    website: {
+      type: String,
+      maxlength: [100, "La dirección del sitio web no puede superar los 100 caracteres"],
+      validate: {
+        validator: function (v) {
+          if (v === "") return true;
+          return /^(ftp|http|https):\/\/[^ "]+$/.test(v);
+        },
+        message: "La dirección del sitio web no es válida",
+      },
     },
     relationship: {
       type: Number,
