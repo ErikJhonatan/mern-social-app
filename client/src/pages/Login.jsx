@@ -19,7 +19,7 @@ function Login() {
   const hideAlert = () => {
     setTimeout(() => {
       setAlertLogin({ ...alertLogin, show: false });
-    }, 1000);
+    }, 3000);
   };
 
   const onSubmit = async (credentials) => {
@@ -131,7 +131,7 @@ function Login() {
               </label>
             </div>
             <div className="form-control mt-6">
-              <button className="btn btn-primary" disabled={loadingLogin}>
+              <button className="btn btn-primary btn-login" disabled={loadingLogin || alertLogin.show}>
               {
                 loadingLogin && <span className="loading loading-spinner text-white"></span>
               }
@@ -150,12 +150,12 @@ function Login() {
       </div>
       {
         alertLogin.show &&
-        <div role="alert" className={`alert alert-error fixed bottom-2 transition-opacity duration-1000 ${alertLogin.show ? 'opacity-100' : 'opacity-0'}`}>
+        <div role="alert" className={`alert alert-error fixed bottom-2 transition-opacity duration-1000 ${alertLogin.show ? 'opacity-100' : 'opacity-0'} text-white`}>
         {
-          alertLogin.type === 'info' && <CiCircleInfo className="alert-icon w-6" />
+          alertLogin.type === 'info' && <CiCircleInfo className="alert-icon text-3xl" />
         }
         {
-          alertLogin.type === 'error' && <MdErrorOutline className="alert-icon w-6" />
+          alertLogin.type === 'error' && <MdErrorOutline className="alert-icon text-3xl" />
         }
         <span>
           {alertLogin.message}
