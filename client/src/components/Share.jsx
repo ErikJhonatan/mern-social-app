@@ -8,6 +8,7 @@ import { useForm } from "react-hook-form";
 import { useState, useContext } from "react";
 import DialogAccept from "./DIalogAccept";
 import { AuthContext } from "../context/AuthProvider";
+import EmojiPicker from 'emoji-picker-react';
 
 const DialogAcceptContext = createContext();
 
@@ -20,6 +21,8 @@ function Share() {
   } = useForm();
 
   const [postImg, setPostImg] = useState(null);
+
+  const [openPickerEmoji, setOpenPickerEmoji] = useState(false);
 
   const handlePostImg = (e) => {
     const reader = new FileReader();
@@ -57,7 +60,12 @@ function Share() {
             </div>
           </div>
           <div>
-            <h2 className="font-semibold">
+            {
+             /**
+              * Title of the post
+              **/ 
+            }
+            <h2 className="font-semibold post-title">
               {user?.username}
             </h2>
             <span className="text-gray-500">Publicar algo</span>
@@ -127,7 +135,9 @@ function Share() {
             </div>
 
             <div className="flex items-center gap-1">
-              <button className="btn btn-circle">
+              <button className="btn btn-circle"
+              onClick={() => setOpenPickerEmoji(!openPickerEmoji)}
+              >
                 <MdEmojiEmotions className="text-2xl text-yellow-500" />
               </button>
               <span className="hidden lg:inline">Feeling</span>
@@ -140,6 +150,14 @@ function Share() {
               <span className="hidden lg:inline">Ubicación</span>
             </div>
           </div>
+          <EmojiPicker 
+          theme="dark" open={openPickerEmoji} 
+          searchPlaceholder="Buscar emoji" emojiStyle="facebook"
+          onEmojiClick={(emojiObject) => {
+            const postTitle = document.querySelector(".post-title");
+            postTitle.innerHTML = user?.username + " esta " + emojiObject.emoji;
+          }}
+          />
           <div className="divider"></div>
           <button
             className="btn btn-primary w-full mt-2 lg:w-auto"
