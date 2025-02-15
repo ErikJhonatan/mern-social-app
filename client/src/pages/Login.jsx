@@ -24,6 +24,7 @@ function Login() {
 
   const onSubmit = async (credentials) => {
     setLoadingLogin(true);
+    try {
     const loginData = await login(credentials);
     const { status } = loginData;
     if (status === 401) {
@@ -36,6 +37,12 @@ function Login() {
       console.log('Usuario no encontrado');
       setLoadingLogin(false);
       setAlertLogin({ show: true, message: 'Usuario no encontrado', type: 'error' });
+      hideAlert();
+    }
+    }
+    catch (error) {
+      setLoadingLogin(false);
+      setAlertLogin({ show: true, message: 'Error en la petición, o el servidor no responde', type: 'error' });
       hideAlert();
     }
   };
