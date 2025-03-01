@@ -10,15 +10,13 @@ const authRouter = router.Router();
 
 // Register
 authRouter.post('/register', upload.single('profileImage'), async (req, res, next) => {
+  if (!req.file || !req.file.path) {
+    return res.status(400).json({ 
+      errors: ['La imagen de perfil es requerida'] 
+    });
+  }
+  const user = new User(req.body);
   try {
-    if (!req.file || !req.file.path) {
-      return res.status(400).json({ 
-        errors: ['La imagen de perfil es requerida'] 
-      });
-    }
-
-    const user = new User(req.body);
-    
     const result = await cloudinary.uploader.upload(req.file.path, {
       folder: 'users',
       crop: 'scale',
