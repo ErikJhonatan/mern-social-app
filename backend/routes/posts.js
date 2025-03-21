@@ -2,11 +2,12 @@ import router from 'express';
 import Post from '../models/Post.js';
 import User from '../models/User.js';
 import httpStatusCodes from 'http-status-codes';
+import { validatePostBody, validatePostId } from '../middlewares/validatePost.js';
 
 const PostsRouter = router.Router();
 // create post
-PostsRouter.post('/', async (req, res, next) => {
-  const newPost = new Post(req.body);
+PostsRouter.post('/', validatePostBody, async (req, res, next) => {
+  const newPost = new Post({ ...req.postData, userId: req.auth.id });
   try {
     const post = await newPost.save();
     res.status(httpStatusCodes.CREATED).json(post);
@@ -16,7 +17,7 @@ PostsRouter.post('/', async (req, res, next) => {
 });
 
 // update a post
-PostsRouter.put('/:id', async (req, res, next) => {
+PostsRouter.put('/:id', validatePostId, validatePostBody, async (req, res, next) => {
   try {
     const userAuthId = req.auth.id;
     const post = await Post.findById(req.params.id);
@@ -32,9 +33,9 @@ PostsRouter.put('/:id', async (req, res, next) => {
     }
 
     const updatedPost = await Post.findByIdAndUpdate(req.params.id, {
-      $set: req.body
-    }, { new: true }); 
-    res.json(updatedPost).status(httpStatusCodes.OK);
+      $set: req.postData
+    }, { new: true, runValidators: true });
+    res.status(httpStatusCodes.OK).json(updatedPost);
   }
   catch (error) {
     next(error);
@@ -42,7 +43,7 @@ PostsRouter.put('/:id', async (req, res, next) => {
 });
 
 // delete a post
-PostsRouter.delete('/:id', async (req, res, next) => {
+PostsRouter.delete('/:id', validatePostId, async (req, res, next) => {
   try {
     const userAuthId = req.auth.id;
     const post = await Post.findById(req.params.id);
@@ -57,7 +58,7 @@ PostsRouter.delete('/:id', async (req, res, next) => {
       throw err;
     }
     const deletedPost = await Post.findByIdAndDelete(req.params.id);
-    res.json(deletedPost).status(httpStatusCodes.OK);
+    res.status(httpStatusCodes.OK).json(deletedPost);
   }
   catch (error) {
     next(error);
@@ -66,7 +67,7 @@ PostsRouter.delete('/:id', async (req, res, next) => {
 
 // like / dislike a post
 
-PostsRouter.post('/:id/like', async (req, res, next) => {
+PostsRouter.post('/:id/like', validatePostId, async (req, res, next) => {
   try {
     const userAuthId = req.auth.id;
     const post = await Post.findById(req.params.id);
@@ -81,7 +82,7 @@ PostsRouter.post('/:id/like', async (req, res, next) => {
       post.likes.push(userAuthId);
     }
     await post.save();
-    res.json(post).status(httpStatusCodes.OK);
+    res.status(httpStatusCodes.OK).json(post);
   }
   catch (error) {
     next(error);
@@ -93,13 +94,8 @@ PostsRouter.post('/:id/like', async (req, res, next) => {
 PostsRouter.get('/timeline/all', async (req, res, next) => {
   try {
     const user = await User.findById(req.auth.id);
-    const userPosts = await Post.find({ userId: user._id });
-    const friendPosts = await Promise.all(
-      user.followings.map((friendId) => {
-        return Post.find({ userId: friendId });
-      })
-    );
-    res.json(userPosts.concat(...friendPosts)).status(httpStatusCodes.OK);
+    const posts = await Post.find({ userId: { $in: [req.auth.id, ...user.followings] } }).sort({ createdAt: -1 });
+    res.status(httpStatusCodes.OK).json(posts);
   }
   catch (error) {
     next(error);

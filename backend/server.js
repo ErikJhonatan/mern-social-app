@@ -9,6 +9,7 @@ import AuthMiddleware from './middlewares/AuthMiddleware.js'
 import ErrorMiddleware from './middlewares/ErrorMiddleware.js';
 import authRouter from './routes/auth.js';
 import UsersRouter from './routes/users.js';
+import PostsRouter from './routes/posts.js';
 import checkUserExists from './middlewares/checkUserExists.js';
 
 const app = express();
@@ -43,6 +44,7 @@ app.get('/', (req, res) => {
 
 app.use('/api/auth', authRouter);
 app.use('/api/users', UsersRouter);
+app.use('/api/posts', PostsRouter);
 app.use(ErrorMiddleware);
 
 

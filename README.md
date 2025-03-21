@@ -10,7 +10,7 @@ Proyecto full stack para explorar los flujos de una red social: identidad, perfi
 - Inicio de sesión con JWT en cookies y rutas para consultar la sesión.
 - Rutas para consultar, seguir y dejar de seguir usuarios.
 
-El repositorio también contiene un router de publicaciones con operaciones de creación, edición, eliminación, likes y timeline. Ese router **no está montado en `backend/server.js`**, por lo que esas operaciones no deben interpretarse como una API disponible en el estado actual.
+El repositorio también contiene un router de publicaciones con operaciones de creación, edición, eliminación, likes y timeline. El router está montado en `/api/posts`, requiere autenticación y limita las modificaciones al propietario. Los cuerpos e identificadores se validan antes de acceder a los datos.
 
 ## Estructura
 
