@@ -60,7 +60,7 @@ function Login() {
             className="object-cover w-full h-full"
           />
         </figure>
-        <div className="card-body lg:w-1/2">
+        <div className="card-body lg:w-1/2 flex flex-col items-center justify-center">
           <h2 className="card-title text-2xl font-bold mb-6">Iniciar sesión</h2>
           <form onSubmit={handleSubmit(onSubmit)} noValidate>
             <div className="form-control">
@@ -138,7 +138,7 @@ function Login() {
               </label>
             </div>
             <div className="form-control mt-6">
-              <button className="btn btn-primary btn-login" disabled={loadingLogin || alertLogin.show}>
+              <button className="btn btn-primary btn-login w-full" disabled={loadingLogin || alertLogin.show}>
               {
                 loadingLogin && <span className="loading loading-spinner text-white"></span>
               }
