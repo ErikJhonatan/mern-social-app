@@ -151,23 +151,8 @@ function Share() {
             </div>
           </div>
           <EmojiPicker 
-          className="mt-4"
-          theme="auto" 
-          open={openPickerEmoji} 
+          theme="dark" open={openPickerEmoji} 
           searchPlaceholder="Buscar emoji" emojiStyle="facebook"
-          reactionsDefaultOpen={true}
-          categories={
-            [
-              {
-                category: 'suggested',
-                name: 'Usados recientemente'
-              },
-              {
-                category: 'smileys_people',
-                name: 'Emojis'
-              }
-            ]
-          }
           onEmojiClick={(emojiObject) => {
             const postTitle = document.querySelector(".post-title");
             postTitle.innerHTML = user?.username + " esta " + emojiObject.emoji;
